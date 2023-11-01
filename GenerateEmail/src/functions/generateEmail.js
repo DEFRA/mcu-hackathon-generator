@@ -1,6 +1,6 @@
 const { app } = require('@azure/functions');
-const { generateEmailContent } = require('../../lib/openai');
-const { uploadJsonToBlobStorage } = require('../../lib/storage');
+const { generateEmailContent } = require('../lib/openai');
+const { uploadJsonToBlobStorage } = require('../lib/storage');
 
 const generateEmail = async (sentiment, topic) => {
   const content = await generateEmailContent(sentiment, topic)
