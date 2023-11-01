@@ -2,8 +2,8 @@ const { app } = require('@azure/functions');
 const { generateEmailContent } = require('../lib/openai');
 const { uploadJsonToBlobStorage } = require('../lib/storage');
 
-const generateEmail = async (sentiment, topic) => {
-  const content = await generateEmailContent(sentiment, topic)
+const generateEmail = async () => {
+  const content = await generateEmailContent()
 
   const email = {
     new: true,
@@ -18,32 +18,28 @@ const generateEmail = async (sentiment, topic) => {
     body: content.body
   }
 
-  return email
+  return {
+    email,
+    metadata: {
+      sentiment: content.sentiment,
+      topic: content.topic,
+      confidential: content.confidential,
+      emotion: content.emotion,
+      member_of_parliament: content.member_of_parliament
+    }
+  }
 }
 
 app.http('generateEmail', {
-  methods: ['POST'] ,
+  methods: ['POST'],
   authLevel: 'anonymous',
   handler: async (request, context) => {
     context.log(`Http function processed request for url "${request.url}"`);
 
-    const noEmails = request.query.get('noEmails')
-    const sentiment = request.query.get('sentiment')
-    const topic = request.query.get('topic')
+    const email = await generateEmail()
 
-    const emails = []
+    await uploadJsonToBlobStorage('emails', email.email, email.metadata)
 
-    for (let i = 0; i < noEmails; i++) {
-      const email = await generateEmail(sentiment, topic)
-
-      await uploadJsonToBlobStorage('emails', email, {
-        sentiment,
-        topic
-      })
-
-      emails.push(email)
-    }
-
-    return { body: JSON.stringify(emails) }
+    return { body: JSON.stringify(email) }
   }
 });

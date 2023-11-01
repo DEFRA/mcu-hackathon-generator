@@ -6,8 +6,14 @@ const api_key = process.env.AD_TOKEN;
 const api_version = '2023-03-15-preview';
 const engine = 'gpt-4-32k';
 
-const generateEmailContent = async (category, topic) => {
-    const messages = [{'role': 'user', 'content': `write an ${category} email regarding ${topic} in three sentences in json format (subject and body)`}];
+const systemPrompt = require('../../prompts/system')
+const userPrompt = require('../../prompts/user')
+
+const generateEmailContent = async () => {
+  const messages = [
+    { 'role': 'system', 'content': systemPrompt },
+    { 'role': 'user', 'content': userPrompt }
+  ];
   
     try {
       const response = await axios.post(`${api_base}/openai/deployments/${engine}/chat/completions?api-version=${api_version}`, {

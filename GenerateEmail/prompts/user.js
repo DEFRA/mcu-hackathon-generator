@@ -1,0 +1,3 @@
+const prompt = `Write a full and complete formal letter of at least 2000 words in UK english, about an issue relevant to the department that a selected minister would be reasponsible for. Occasioanly the letter may be cross-cutting covering more than one misisters department. Please sign the letter with a diverse and representative created persona representing the people of the United Kingdom, although you dont need to mention the UK. Each letter should have a different underlying emotion such as happy, sad, Angry, disgust and so on. On some occasions you will request the letter to be treated in confidence.`
+
+module.exports = prompt
